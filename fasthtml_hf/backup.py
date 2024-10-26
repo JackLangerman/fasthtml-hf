@@ -19,12 +19,17 @@ def get_dataset_id(cfg):
     return f"{whoami(_token())['name']}/{did}"
 
 def download():
+    print('Searching for database backup...')
     cfg = get_cfg()
     did = get_dataset_id(cfg)
     upload_on_schedule()
     if os.getenv("SPACE_ID") and repo_exists(did, repo_type="dataset", token=_token()):
+        print('Found existing backup, copying...')
         cache_path = snapshot_download(repo_id=did, repo_type='dataset', token=_token())
         shutil.copytree(cache_path, cfg.db_dir, dirs_exist_ok=True)
+        print(f'copied db to {cfg.db_dir}...done.')
+    else:
+        print(f'no db found at {did}! (or the SPACE_ID environment variable isn\'t set)')
 
 def upload():
     cfg = get_cfg()
