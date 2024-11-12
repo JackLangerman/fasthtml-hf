@@ -40,6 +40,9 @@ def upload():
         create_repo(did, token=_token(), private=cfg.private_backup, repo_type='dataset', exist_ok=True)
         upload_folder(folder_path=cfg.db_dir, token=_token(), repo_id=did,
                     repo_type='dataset', commit_message=f"backup {datetime.now()}")
+        print('='*60)
+        print(f'NOTE: backed up {cfg.db_dir} to {did}')
+        print('='*60)
     except Exception as e:
         print('-'*80)
         print('WARNING!!!!! THERE MIGHT BE A PROBLEM WITH BACKUPS!!!! CHECK BACKUPS')
