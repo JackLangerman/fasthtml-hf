@@ -27,18 +27,24 @@ def download():
         print('Found existing backup, copying...')
         cache_path = snapshot_download(repo_id=did, repo_type='dataset', token=_token())
         shutil.copytree(cache_path, cfg.db_dir, dirs_exist_ok=True)
-        print(f'copied db to {cfg.db_dir}...done.')
+        print(f'copied db from {cache_path} to {cfg.db_dir}...done.')
+        print(Path(cfg.db_dir).lsdir())
     else:
         print(f'no db found at {did}! (or the SPACE_ID environment variable isn\'t set)')
 
 def upload():
-    cfg = get_cfg()
-    if not os.getenv("SPACE_ID"): return
-    did = get_dataset_id(cfg)
-    create_repo(did, token=_token(), private=cfg.private_backup, repo_type='dataset', exist_ok=True)
-    upload_folder(folder_path=cfg.db_dir, token=_token(), repo_id=did,
-                  repo_type='dataset', commit_message=f"backup {datetime.now()}")
-
+    try:
+        cfg = get_cfg()
+        if not os.getenv("SPACE_ID"): return
+        did = get_dataset_id(cfg)
+        create_repo(did, token=_token(), private=cfg.private_backup, repo_type='dataset', exist_ok=True)
+        upload_folder(folder_path=cfg.db_dir, token=_token(), repo_id=did,
+                    repo_type='dataset', commit_message=f"backup {datetime.now()}")
+    except Exception as e:
+        print('-'*80)
+        print('WARNING!!!!! THERE MIGHT BE A PROBLEM WITH BACKUPS!!!! CHECK BACKUPS')
+        print(e)
+        
 
 @threaded
 def upload_on_schedule():
