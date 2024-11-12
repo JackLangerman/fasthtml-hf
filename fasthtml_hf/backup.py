@@ -28,7 +28,7 @@ def download():
         cache_path = snapshot_download(repo_id=did, repo_type='dataset', token=_token())
         shutil.copytree(cache_path, cfg.db_dir, dirs_exist_ok=True)
         print(f'copied db from {cache_path} to {cfg.db_dir}...done.')
-        print(Path(cfg.db_dir).lsdir())
+        print('\n'.join(Path(cfg.db_dir).iterdir()))
     else:
         print(f'no db found at {did}! (or the SPACE_ID environment variable isn\'t set)')
 
